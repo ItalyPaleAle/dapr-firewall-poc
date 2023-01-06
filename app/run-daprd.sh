@@ -3,7 +3,7 @@
 LOG_LEVEL=${1:-"debug"}
 
 ~/.dapr/bin/daprd \
-    --app-id healthcheck \
+    --app-id firewallpoc \
     --dapr-http-port 3602 \
     --dapr-grpc-port 6602 \
     --metrics-port 9090 \

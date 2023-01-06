@@ -46,16 +46,37 @@ You will need 2 terminal windows to launch Dapr and the app.
 1. Launch Dapr in one terminal window:  
   
   ```sh
-  cd app && ./run-daprd.sh
+  (cd app && ./run-daprd.sh)
   ```
 
 2. Launch the app in another terminal window:  
   
   ```sh
-  cd app && ./run-app.sh
+  (cd app && ./run-app.sh)
   ```
 
+You will see that Dapr will create an app channel and can send requests to the app, even though the app does not implement a server.
+
 ## Implementation details
+
+At a high level, this is implemented by making the app (via the Dapr SDK) create an outbound TCP connection to the Dapr sidecar. Once the connection is up, the app starts a gRPC server on the established connection, and can begin accepting requests from the sidecar.
+
+In details:
+
+- The app is started without any gRPC or HTTP server, and `--app-port` is unset when starting `daprd`. However, there's a new flag for `daprd` called `--enable-callback-channel` which tells Dapr to expect the app to create a channel using the callback.
+- There's a new method in the Dapr's runtime gRPC server called [`ConnectAppCallback`](https://github.com/ItalyPaleAle/dapr/blob/45a04142f826ce70d7bb290726da7e7be3cd4ec3/dapr/proto/runtime/v1/dapr.proto#L124). When the app starts, it creates a Dapr client (just as usual) which then invokes `ConnectAppCallback` on the sidecar.
+  - When `ConnectAppCallback` is invoked, the sidecar [starts an ephemeral TCP listener](https://github.com/ItalyPaleAle/dapr/blob/45a04142f826ce70d7bb290726da7e7be3cd4ec3/pkg/grpc/api_connectappcallback.go#L31-L107), on a random port. It responds to the app's gRPC call with the port number.
+  - The app then has a certain amount of time (currently, 10s) to establish a TCP connection to the ephemeral listener the sidecar has started. For the app, this is an outbound connection so it does not need any open firewall port (however, the sidecar needs to have the port, which is currently random, open).
+  - Once the TCP connection is established, Dapr automatically turns that into a "client connection" and creates a gRPC client on that.
+  - Likewise, the app creates a gRPC server on the active TCP connection.
+- All of the above are handled by the Dapr SDK automatically: the app just needs to invoke [`NewServiceFromCallbackChannel`](https://github.com/ItalyPaleAle/dapr-go-sdk/blob/e1ede39920d59860e183d9412796e5971183b0f1/service/grpc/service.go#L59-L87) and pass the existing client connection.
+
+Here are the code diffs that make this possible:
+
+- [dapr/dapr](https://github.com/ItalyPaleAle/dapr/compare/master...firewall)
+- [dapr/go-sdk](https://github.com/ItalyPaleAle/dapr-go-sdk/compare/dep-upgrade...firewall)
+
+Check out the demo app's [`main.go`](https://github.com/ItalyPaleAle/dapr-firewall-poc/blob/main/app/main.go) to see an example of how this is used.
 
 ## Current staus
 
