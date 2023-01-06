@@ -66,7 +66,8 @@ In details:
 - The app is started without any gRPC or HTTP server, and `--app-port` is unset when starting `daprd`. However, there's a new flag for `daprd` called `--enable-callback-channel` which tells Dapr to expect the app to create a channel using the callback.
 - There's a new method in the Dapr's runtime gRPC server called [`ConnectAppCallback`](https://github.com/ItalyPaleAle/dapr/blob/45a04142f826ce70d7bb290726da7e7be3cd4ec3/dapr/proto/runtime/v1/dapr.proto#L124). When the app starts, it creates a Dapr client (just as usual) which then invokes `ConnectAppCallback` on the sidecar.
   - When `ConnectAppCallback` is invoked, the sidecar [starts an ephemeral TCP listener](https://github.com/ItalyPaleAle/dapr/blob/45a04142f826ce70d7bb290726da7e7be3cd4ec3/pkg/grpc/api_connectappcallback.go#L31-L107), on a random port. It responds to the app's gRPC call with the port number.
-  - The app then has a certain amount of time (currently, 10s) to establish a TCP connection to the ephemeral listener the sidecar has started. For the app, this is an outbound connection so it does not need any open firewall port (however, the sidecar needs to have the port, which is currently random, open).
+  - The app then has a certain amount of time (currently, 10s) to establish a TCP connection to the ephemeral listener the sidecar has started. For the app, this is an outbound connection so it does not need any open firewall port (however, the sidecar needs to have the port open).
+  - The port the sidecar opens is random by default. If a specific port needs to be used, daprd can be started with the `--callback-channel-port 1234` flag.
   - Once the TCP connection is established, Dapr automatically turns that into a "client connection" and creates a gRPC client on that.
   - Likewise, the app creates a gRPC server on the active TCP connection.
 - All of the above are handled by the Dapr SDK automatically: the app just needs to invoke [`NewServiceFromCallbackChannel`](https://github.com/ItalyPaleAle/dapr-go-sdk/blob/e1ede39920d59860e183d9412796e5971183b0f1/service/grpc/service.go#L59-L87) and pass the existing client connection.
@@ -89,5 +90,5 @@ Check out the demo app's [`main.go`](https://github.com/ItalyPaleAle/dapr-firewa
   - [ ] Python
   - [ ] Rust
 - [ ] Handle automatic reconnections if the connection drops
-- [ ] Unit tests
+- [X] Unit tests
 - [ ] E2E tests
