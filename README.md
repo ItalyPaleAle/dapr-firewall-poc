@@ -78,7 +78,7 @@ In details:
 Here are the code diffs that make this possible:
 
 - [dapr/dapr](https://github.com/ItalyPaleAle/dapr/compare/master...firewall)
-- [dapr/go-sdk](https://github.com/ItalyPaleAle/dapr-go-sdk/compare/dep-upgrade...firewall)
+- [dapr/go-sdk](https://github.com/ItalyPaleAle/dapr-go-sdk/compare/main...firewall)
 
 Check out the demo app's [`main.go`](https://github.com/ItalyPaleAle/dapr-firewall-poc/blob/main/app/main.go) to see an example of how this is used.
 
