@@ -89,7 +89,7 @@ Check out the demo app's [`main.go`](https://github.com/ItalyPaleAle/dapr-firewa
   - [X] Go
   - [ ] .NET
   - [ ] Java
-  - [ ] JavaScript
+  - [ ] JavaScript - Possibly blocked due to grpc/grpc-node#2317
   - [ ] Python
   - [ ] Rust
 - [X] Handle automatic reconnections if the connection drops
