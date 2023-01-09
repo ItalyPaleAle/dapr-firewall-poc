@@ -70,6 +70,7 @@ In details:
   - The port the sidecar opens is random by default. If a specific port needs to be used, daprd can be started with the `--callback-channel-port 1234` flag.
   - Once the TCP connection is established, Dapr automatically turns that into a "client connection" and creates a gRPC client on that.
   - Likewise, the app creates a gRPC server on the active TCP connection.
+- Once the callback channel connection is established, Dapr invokes the `Ping` method on the app, which is a gRPC streaming call that is used to detect when the callback channel connection drops. This is necessary because if the connection drops, the app needs to have a way to detect that and re-connect to Dapr.
 - All of the above are handled by the Dapr SDK automatically: the app just needs to invoke [`NewServiceFromCallbackChannel`](https://github.com/ItalyPaleAle/dapr-go-sdk/blob/e1ede39920d59860e183d9412796e5971183b0f1/service/grpc/service.go#L59-L87) and pass the existing client connection.
 
 Here are the code diffs that make this possible:
