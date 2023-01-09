@@ -57,6 +57,8 @@ You will need 2 terminal windows to launch Dapr and the app.
 
 You will see that Dapr will create an app channel and can send requests to the app, even though the app does not implement a server.
 
+Next, try stopping the app and restarting it. And then, try stopping daprd and restarting it. The solution should recover automatically and quickly.
+
 ## Implementation details
 
 At a high level, this is implemented by making the app (via the Dapr SDK) create an outbound TCP connection to the Dapr sidecar. Once the connection is up, the app starts a gRPC server on the established connection, and can begin accepting requests from the sidecar.
@@ -90,6 +92,6 @@ Check out the demo app's [`main.go`](https://github.com/ItalyPaleAle/dapr-firewa
   - [ ] JavaScript
   - [ ] Python
   - [ ] Rust
-- [ ] Handle automatic reconnections if the connection drops
+- [X] Handle automatic reconnections if the connection drops
 - [X] Unit tests
 - [ ] E2E tests

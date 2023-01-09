@@ -33,7 +33,7 @@ func main() {
 		for {
 			time.Sleep(2 * time.Second)
 			ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
-			res, err := client.InvokeMethod(ctx, "healthcheck", "foo", "GET")
+			res, err := client.InvokeMethod(ctx, "firewallpoc", "foo", "GET")
 			cancel()
 			fmt.Println("Invoke:", err, string(res))
 		}
