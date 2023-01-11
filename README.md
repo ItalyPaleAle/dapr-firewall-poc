@@ -39,6 +39,12 @@ Build Dapr and "install" the binary:
 ./build-dapr.sh
 ```
 
+To build the Docker image instead:
+
+```sh
+./build-dapr-docker.sh
+```
+
 ### Run the app
 
 You will need 2 terminal windows to launch Dapr and the app.
@@ -47,6 +53,12 @@ You will need 2 terminal windows to launch Dapr and the app.
   
   ```sh
   (cd app && ./run-daprd.sh)
+  ```
+
+  To use Docker instead:
+
+  ```sh
+  (cd app && ./run-daprd-docker.sh)
   ```
 
 2. Launch the app in another terminal window:  
