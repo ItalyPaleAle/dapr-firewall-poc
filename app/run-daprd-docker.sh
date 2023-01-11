@@ -1,6 +1,7 @@
 #!/bin/sh
 
 LOG_LEVEL=${1:-"debug"}
+APP_NAME=firewallpoc
 
 docker run \
   --rm \
@@ -9,7 +10,7 @@ docker run \
   -p 2002:2002 \
   dapr-firewall:latest\
     /daprd \
-      --app-id firewallpoc \
+      --app-id $APP_NAME \
       --dapr-http-port 3602 \
       --dapr-grpc-port 6602 \
       --metrics-port 9090 \
